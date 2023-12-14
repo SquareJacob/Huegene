@@ -13,8 +13,8 @@ public class Diffuser : MonoBehaviour{
     public Material mat;
     private Texture2D texture;
     private RDCell[,] grid, nextGrid;
-    private int width = 1024;
-    private int height = 1024;
+    private int width = 256;
+    private int height = 256;
     public float dA = 1f;
     public float dB = 0.5f;
     public float f = 0.055f;
@@ -70,8 +70,8 @@ public class Diffuser : MonoBehaviour{
         texture.Apply(); //not sure if this is needed
         mat.SetTexture("_MainTex", texture); //sends texture
         //make B clump in area
-        int ax = width / 5;
-        int ay = height / 5;
+        int ax = width / 2;
+        int ay = height / 2;
         grid[ax, ay].b = 1f;
         grid[ax, ay + 1].b = 1f;
         grid[ax + 1, ay].b = 1f;
