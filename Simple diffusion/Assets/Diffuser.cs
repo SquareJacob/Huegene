@@ -15,16 +15,17 @@ public class Diffuser : MonoBehaviour{
     private RDCell[,] grid, nextGrid;
     private int width = 256;
     private int height = 256;
-    public float dA = 1f;
-    public float dB = 0.5f;
-    public float f = 0.055f;
-    public float k = 0.062f;
+    public float dA = 1f; //how much nearby A chemicals dip
+    public float dB = 0.5f; //how much nearby B chemicals dip
+    public float f = 0.055f; //feed rate for chemical A
+    public float k = 0.062f; //feed rate for chemical B
 
     int mod(int x, int m) {
         int n = x % m;
         return n < 0 ? n + m : n;
     }
 
+    //Laplace functions find weighted difference between a cell and its neighbor cells
     float LaplaceA(int x, int y){
         float sum = grid[x, y].a * -1f;
 
@@ -63,13 +64,13 @@ public class Diffuser : MonoBehaviour{
         //fill grid and texture
         for(int x = 0; x < width; x++){
             for(int y = 0; y < height; y++){
-                texture.SetPixel(x, y, Color.red);
+                texture.SetPixel(x, y, Color.red); //Make it a different color than used so that if something goes wrong here its obvious
                 grid[x, y] = new RDCell();
             }
         }
         texture.Apply(); //not sure if this is needed
         mat.SetTexture("_MainTex", texture); //sends texture
-        //make B clump in area
+        //make clump of B in center area to initialize spread
         int ax = width / 2;
         int ay = height / 2;
         grid[ax, ay].b = 1f;
@@ -80,7 +81,7 @@ public class Diffuser : MonoBehaviour{
 
 
     void Update(){
-        for(int i = 0; i < 10; i++){
+        for(int i = 0; i < 10; i++){ //Perform calculations 10 times before drawing to allow quicker simulations (less time spent drawing)
             nextGrid = new RDCell[width, height];
             for(int x = 0; x < width; x++){
                 for(int y = 0; y < height; y++){
