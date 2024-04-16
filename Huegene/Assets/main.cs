@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class Main : MonoBehaviour{
     private int width = 512;
-    private int numPlants = 1000;
-    static float recolor = 0.05f;
+    private int numPlants = 10000;
+    static float recolor = 0.01f;
     public Material mat;
     private Texture2D texture;
     private List<Plant> plants;
@@ -15,9 +15,8 @@ public class Main : MonoBehaviour{
     private long drawTime;
     private long breedTime;
     private long ageTime;
-    private Stopwatch stopWatch = new Stopwatch();
-    private Color[] colors;
-    private bool[,] covered;
+    Stopwatch stopWatch = new Stopwatch();
+    Color[] colors;
 
     float rand(){
         return Random.value;
@@ -26,22 +25,19 @@ public class Main : MonoBehaviour{
     void Start(){
         //Intialize texture
         texture = new Texture2D(width, width);
-        plants = new List<Plant>(width * width);
+        plants = new List<Plant>(numPlants);
         colors = new Color[width * width];
-        covered = new bool[width, width];
 
-        //fill texture and covered
+        //fill texture
         for(int x = 0; x < width; x++){
             for(int y = 0; y < width; y++){
                 texture.SetPixel(x, y, Color.black);
-                covered[x, y] = false;
             }
         }
         texture.Apply(); //not sure if this is needed
         mat.SetTexture("_MainTex", texture); //sends texture
         for(int i = 0; i < 1; i++){
-            plants.Add(new Plant(width / 2, width / 2, rand(), rand(), rand()));
-            covered[width / 2, width / 2] = true;
+            plants.Add(new Plant(width / 2f, width / 2f, rand(), rand(), rand()));
         }
         stopWatch.Start();
     }
@@ -53,18 +49,27 @@ public class Main : MonoBehaviour{
         breedTime = 0;
         ageTime = 0;
 
-        if(plants.Count < width * width){
+        if(plants.Count < numPlants){
             for(int i = 0; i < length; i++){
                 plant = plants[i];
-                if(plant.still){
-                    continue;
-                }
-                breedTime -= stopWatch.ElapsedMilliseconds;
-                plant.duplicate(plants, recolor, covered);
-                breedTime += stopWatch.ElapsedMilliseconds;
                 drawTime -= stopWatch.ElapsedMilliseconds;
                 plant.draw(colors, width);
                 drawTime += stopWatch.ElapsedMilliseconds;
+                breedTime -= stopWatch.ElapsedMilliseconds;
+                plant.duplicate(plants, recolor);
+                breedTime += stopWatch.ElapsedMilliseconds;
+                ageTime -= stopWatch.ElapsedMilliseconds;
+                plant.age(recolor);
+                ageTime += stopWatch.ElapsedMilliseconds;
+            }
+        } else {
+            foreach(Plant plant in plants){
+                drawTime -= stopWatch.ElapsedMilliseconds;
+                plant.draw(colors, width);
+                drawTime += stopWatch.ElapsedMilliseconds;
+                ageTime -= stopWatch.ElapsedMilliseconds;
+                plant.age(recolor);
+                ageTime += stopWatch.ElapsedMilliseconds;
             }
         }
         UnityEngine.Debug.Log("drawTime: " + drawTime + ", breedTime: " + breedTime + ", ageTime: " + ageTime);
