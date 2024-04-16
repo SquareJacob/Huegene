@@ -9,7 +9,7 @@ public class Plant{
     public float r;
     public float g;
     public float b;
-    public bool still;
+    public int life;
 
     public Plant(int plantX, int plantY, float plantR, float plantG, float plantB){
         x = plantX;
@@ -17,7 +17,7 @@ public class Plant{
         r = plantR;
         g = plantG;
         b = plantB;
-        still = false;
+        life = 100;
     }
 
     float rand(){
@@ -87,8 +87,14 @@ public class Plant{
         if(pos[0] != -1){
             plants.Add(new Plant(pos[0], pos[1], r + recolor * rand(), g + recolor * rand(), b + recolor * rand()));
             covered[pos[0], pos[1]] = true;
-        } else {
-            still = true;
         }
-    }      
+    }  
+
+    public void age(List<Plant> plants, bool[,] covered){
+        life -= 1;
+        if(life == 0){
+            covered[x, y] = false;
+            plants.Remove(this);
+        }
+    }    
 }

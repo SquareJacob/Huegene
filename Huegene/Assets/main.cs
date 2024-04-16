@@ -4,7 +4,7 @@ using System.Diagnostics;
 using UnityEngine;
 
 public class Main : MonoBehaviour{
-    private int width = 512;
+    private int width = 256;
     private int numPlants = 1000;
     static float recolor = 0.05f;
     public Material mat;
@@ -53,19 +53,17 @@ public class Main : MonoBehaviour{
         breedTime = 0;
         ageTime = 0;
 
-        if(plants.Count < width * width){
-            for(int i = 0; i < length; i++){
-                plant = plants[i];
-                if(plant.still){
-                    continue;
-                }
-                breedTime -= stopWatch.ElapsedMilliseconds;
-                plant.duplicate(plants, recolor, covered);
-                breedTime += stopWatch.ElapsedMilliseconds;
-                drawTime -= stopWatch.ElapsedMilliseconds;
-                plant.draw(colors, width);
-                drawTime += stopWatch.ElapsedMilliseconds;
-            }
+        for(int i = 0; i < plants.Count; i++){
+            plant = plants[i];
+            breedTime -= stopWatch.ElapsedMilliseconds;
+            plant.duplicate(plants, recolor, covered);
+            breedTime += stopWatch.ElapsedMilliseconds;
+            drawTime -= stopWatch.ElapsedMilliseconds;
+            plant.draw(colors, width);
+            drawTime += stopWatch.ElapsedMilliseconds;
+            ageTime -= stopWatch.ElapsedMilliseconds;
+            plant.age(plants, covered);
+            ageTime += stopWatch.ElapsedMilliseconds;
         }
         UnityEngine.Debug.Log("drawTime: " + drawTime + ", breedTime: " + breedTime + ", ageTime: " + ageTime);
         texture.SetPixels(colors);
