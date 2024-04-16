@@ -1,2 +1,2 @@
-# Unity Shader Base
-Base for all my projects in Unity that use a shader in glsl to render and a C# program for most of the programming.
+# Huegene
+2D behavior of plants with a color(hue) gene that changes over time
